@@ -75,13 +75,13 @@ class team:
         self.vice_captain = ''
 
         try:
-            self.recent_gw = self.fpl.get_recent_gw() - 1
+            self.recent_gw = self.fpl.get_recent_gw() - 1 #is this correct? won't this return gw-2?
         except:
-            self.recent_gw = 38
+            self.recent_gw = 38 # if gw = 1, recent_gw = 0 ==> set recent_gw=38
         if self.gameweek >= self.recent_gw and self.season == '2023-24':
-            self.positions_list = self.fpl.position_dict(self.recent_gw)
+            self.positions_list = self.fpl.position_dict(self.recent_gw) #generate league position
             self.points_scored = self.fpl.actual_points_dict(season, self.recent_gw - 1)
-        elif self.gameweek == 8 and self.season == '2023-24':
+        elif self.gameweek == 8 and self.season == '2023-24': 
             self.positions_list = self.fpl.position_dict(self.gameweek)
             self.points_scored = self.fpl.actual_points_dict(season, gameweek)
         else:

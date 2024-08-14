@@ -2,7 +2,8 @@
 Team Manager for FPL Automation Project
 Author: Benjamin Tindal
 '''
-
+#%%
+import sys
 import argparse
 import fpl_auto.team as team
 import json
@@ -32,7 +33,21 @@ def parse_args():
     
     return args
 
+sys.argv = [
+        'manager.py', 
+        '-season', '2024-25',
+        '-start_gw', '0',
+        '-repeat_until', '2',
+        '-starting_team', 'auto',
+        '-save',
+        '-plot_p_minus_xp'
+]    
+    
+
 inputs = parse_args()
+
+#%%
+
 season = inputs.season
 start_gw = inputs.start_gw
 repeat = inputs.repeat_until - 1
@@ -75,7 +90,7 @@ def main():
     if inputs.starting_team == 'custom_1':
         t = my_team_at_gw1()
     elif inputs.starting_team == 'custom_2':
-        t = get_team_from_manager_id(1) # 1 is my manager id
+        t = get_team_from_manager_id(3124032) # 1 is my manager id
     else:
         t = team.team(season, start_gw, 100)
         t.initial_team_generator() #t = t.select_ideal_team(2, 12, 3, 12, 2, 7, 2, 5.5) 
@@ -140,3 +155,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+# %%

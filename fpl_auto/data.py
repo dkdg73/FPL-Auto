@@ -1,3 +1,4 @@
+#%%
 import numpy as np
 import pandas as pd
 from sklearn import linear_model
@@ -630,10 +631,10 @@ class fpl_data:
     
     def get_recent_gw(self):
         """
-        Get's the most recent gameweek's ID.
+        Get's the most recent (previous) gameweek's ID.
 
         Returns:
-            int: The most recent gameweek's ID.
+            int: The most recent (previous) gameweek's ID.
         """
 
         data = requests.get('https://fantasy.premierleague.com/api/bootstrap-static/')
@@ -641,9 +642,10 @@ class fpl_data:
 
         gameweeks = data['events']
         
-        now = datetime.datetime.utcnow()
+        now = datetime.datetime.now(datetime.timezone.utc)
         for gameweek in gameweeks:
             next_deadline_date = datetime.datetime.strptime(gameweek['deadline_time'], '%Y-%m-%dT%H:%M:%SZ')
+            next_deadline_date = next_deadline_date.replace(tzinfo=datetime.timezone.utc)
             if next_deadline_date > now:
                 return gameweek['id'] - 1
             
@@ -791,3 +793,4 @@ class fpl_data:
                     row['xP'] = xp_array
         
         return n_next_weeks
+# %%

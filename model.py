@@ -2,13 +2,15 @@
 Model Generator for FPL Automation Project
 Author: Benjamin Tindal
 '''
-
+#%%
 import argparse
+import sys
 import numpy as np
 from fpl_auto.data import fpl_data
 from fpl_auto import evaluate as eval
 import pandas as pd
 
+#%%
 def parse_args():
     parser = argparse.ArgumentParser(description="FPL Automation Project: Model")
     parser.add_argument('-gw_data', type=str, default='data/',
@@ -17,7 +19,7 @@ def parse_args():
                         choices=[
                             "linear", "randomforest", "gradientboost", "neuralnetwork"], 
                         help='Model type to use, default: gradientboost')
-    parser.add_argument('-season', type=str, required=True, choices=['2021-22', '2022-23', '2023-24'], help='Season to predict points for. Format: YYYY-YY e.g 2021-22')
+    parser.add_argument('-season', type=str, required=True, default = '2024-25', choices=['2021-22', '2022-23', '2023-24', '2024-25'], help='Season to predict points for. Format: YYYY-YY e.g 2021-22')
     parser.add_argument('-target_gw', type=int, default=1, help='Gameweek to predict points for, default 1')
     parser.add_argument('-repeat', type=int, default=38, help='How many weeks to repeat testing over, default: 38')
     parser.add_argument('-training_prev_weeks', type=int, default=19, help='How many past weeks of data to use for training, default: 19')
@@ -34,7 +36,25 @@ def parse_args():
     
     return args
 
+# for debugging, hardcode the sys.argvs:
+sys.argv = [
+    'model.py',
+    '-season', '2024-25',
+    '-model', 'gradientboost',
+    '-target_gw', '0',
+    '-repeat', '38',
+    '-training_prev_weeks', '19',
+    '-predict_weeks', '4',
+    '-display_weights',
+    '-plot_predictions',
+    '-save',
+    '-score_train_vs_test'
+]
+
 inputs = parse_args()
+
+#%%
+
 # Season to predict points for
 season = inputs.season
 prev_season = f'{int(season[:4])-1}-{int(season[5:])-1}'
@@ -55,9 +75,12 @@ plot_predictions = inputs.plot_predictions
 # Whether to export predictions to tsv
 output_files = inputs.save
 
+#%%
 # Initialise classes
 # Ensure that the correct location is specified for Vastaav data
 vastaav = fpl_data('data', season)
+
+#%%
 
 def main():
     simulation_finished = False
@@ -164,3 +187,5 @@ def main():
         print(f'Total Count: {count}, Average AE: {total_e:.2f}, Average RMSE: {np.sqrt(total_rmse):.2f}, Average ACC: {total_aa*100:.2f}%')
 if __name__ == "__main__":
     main()
+
+# %%
